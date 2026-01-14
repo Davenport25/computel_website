@@ -52,10 +52,31 @@ if (hero) {
 }
 
 /* Demo contact form feedback (non-sending) */
-const submitBtn = document.getElementById('contact-submit');
+const form = document.getElementById('contact-form');
 const note = document.getElementById('form-note');
-if (submitBtn && note) {
-  submitBtn.addEventListener('click', () => {
-    note.textContent = 'Thanks! This demo form doesn\'t send yet — connect it to your email/service when ready.';
+
+if (form && note) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    note.textContent = 'Sending...';
+
+    try {
+      const response = await fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (response.ok) {
+        note.textContent = "Message sent successfully. We'll get back to you soon.";
+        form.reset();
+      } else {
+        note.textContent = 'Something went wrong. Please try again.';
+      }
+    } catch (error) {
+      note.textContent = 'Network error. Please try again later.';
+    }
   });
 }
+
